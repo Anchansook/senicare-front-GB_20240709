@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".", // 절대 경로로 지정
     "target": "es5",
     "lib": [
       "dom",
