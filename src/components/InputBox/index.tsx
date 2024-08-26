@@ -5,15 +5,16 @@ interface Props {
     label: string;
     type: 'text' | 'password';
     placeholder: string;
+    value: string; // 상태관리를 위한 추가
     buttonName?: string;
 };
 
-export default function InputBox({ label, type, placeholder, buttonName }: Props) {
+export default function InputBox({ label, type, placeholder, value, buttonName }: Props) {
     return (
         <div className="input-box">
             <div className="label">{label}</div>
             <div className="input-area">
-                <input type={type} placeholder={placeholder} />
+                <input value={value} type={type} placeholder={placeholder} onChange={} />
                 {buttonName && <div className="input-button disable">{buttonName}</div>}
             </div>
             <div className="message"></div>
