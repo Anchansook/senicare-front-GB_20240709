@@ -2,9 +2,13 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import './style.css';
 import InputBox from 'src/components/InputBox';
 
+//& ctrl + shift + l : 함께 선택되어 바꿀 수 있음
+
+type AuthPath = '회원가입' | '로그인';
+
 // 페이지에 따라 다른 크기의 sns버튼 보여주기
 interface SnsContainerProps {
-    type: '회원가입' | '로그인';
+    type: AuthPath;
 };
 
 function SnsContainer({ type }: SnsContainerProps) {
@@ -21,7 +25,12 @@ function SnsContainer({ type }: SnsContainerProps) {
 
 };
 
-function SignUp() {
+// 공통 인터페이스
+interface AuthComponentProps {
+    onPathChange: (path: AuthPath) => void;
+};
+
+function SignUp({ onPathChange }: AuthComponentProps) {
 
     // 입력창 상태관리
     const [name, setName] = useState<string>('');
@@ -156,7 +165,7 @@ function SignUp() {
     const onSignUpButtonHandler = () => {
         if (!isComplete) return;
 
-        alert('회원가입!');
+        onPathChange('로그인');
     };
 
     useEffect(() => {
@@ -193,16 +202,14 @@ function SignUp() {
 
             <div className="button-container">
                 <div className={`button ${isComplete ? 'primary' : 'disable'} full-width`} onClick={onSignUpButtonHandler}>회원가입</div>
-                <div className="link">로그인</div>
+                <div className="link" onClick={() => onPathChange('로그인')}>로그인</div>
             </div>
 
         </div>
     )
 }
 
-// ctrl + shift + l : 함께 선택되어 바꿀 수 있음
-
-function SignIn() {
+function SignIn({ onPathChange }: AuthComponentProps) {
 
     // 입력창 상태관리
     const [id, setId] = useState<string>('');
@@ -218,6 +225,20 @@ function SignIn() {
     const onPasswordChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
         setPassword(value);
+    };
+
+    const onSingInButtonHandler = () => {
+        if (!id || !password) return;
+
+        if (id !== 'qwer1234' || password !== 'asdf0987') {
+            setMessage('로그인 정보가 일치하지 않습니다.');
+            return;
+        }
+
+        alert('로그인 성공!');
+
+        setId('');
+        setPassword('');
     };
 
     // id, password가 바뀔 때마다 입력창 비워주기
@@ -237,8 +258,8 @@ function SignIn() {
                 <InputBox value={password} onChange={onPasswordChangeHandler} message={message} messageError type='password' label='비밀번호' placeholder='비밀번호를 입력해주세요.' />
             </div>
             <div className="button-container">
-                <div id="sign-in-button" className="button primary full-width">로그인</div>
-                <div className="link">회원가입</div>
+                <div id="sign-in-button" className="button primary full-width" onClick={onSingInButtonHandler}>로그인</div>
+                <div className="link" onClick={() => onPathChange('회원가입')}>회원가입</div>
             </div>
             <div style={{ width: '64px' }} className="divider"></div>
             <SnsContainer type='로그인' />
@@ -248,12 +269,21 @@ function SignIn() {
 };
 
 export default function Auth() {
+
+    const [path, setPath] = useState<AuthPath>('로그인');
+
+    const onPathChangeHandler = (path: AuthPath) => {
+        setPath(path);
+    };
+
     return (
         <div id="auth-wrapper">
             <div className="auth-image"></div>
             <div className="auth-container">
-                <SignIn />
-                {/* <SignUp /> */}
+                {path === '로그인' ?
+                    <SignIn onPathChange={onPathChangeHandler} /> :
+                    <SignUp onPathChange={onPathChangeHandler} />
+                }
             </div>
         </div>
     )
