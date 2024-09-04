@@ -10,7 +10,6 @@ export default function MainLayout() {
             <div>로고</div>
             <div>상단</div>
             <div>좌측 네비게이션</div>
-            <div>주 콘텐츠</div>
             <Outlet />
         </div>
     )
