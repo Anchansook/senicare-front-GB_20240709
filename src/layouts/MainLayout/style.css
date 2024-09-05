@@ -1,0 +1,11 @@
+#main-layout {
+    display: grid;
+    grid-template: 
+        "logo top" 77px /* hight */
+        "side main" minmax(944px, auto) 
+        / 257px minmax(1182px, 100%); /* width */ 
+        /*
+            컨텐츠에 따라 줄어들면 겹치거나 보기 안 좋기 때문에 최소값을 맞추고, 
+            넘어간다면 콘텐츠에 맞춰서 늘어나도록 
+        */
+}
