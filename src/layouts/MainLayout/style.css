@@ -1,11 +1,80 @@
 #main-layout {
     display: grid;
     grid-template: 
-        "logo top" 77px /* hight */
+        "logo top" 77px /* height */
         "side main" minmax(944px, auto) 
         / 257px minmax(1182px, 100%); /* width */ 
         /*
             컨텐츠에 따라 줄어들면 겹치거나 보기 안 좋기 때문에 최소값을 맞추고, 
             넘어간다면 콘텐츠에 맞춰서 늘어나도록 
         */
+}
+
+#layout-logo {
+    grid-area: logo;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-bottom: 1px solid rgba(233, 236, 239, 1);
+    border-right: 1px solid rgba(233, 236, 239, 1);
+
+    /* ▼ 드래그 방지 */
+    user-select: none;
+    /* ▼ 옛날 브라우저 지정 : 굳이 필요없뚬 */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#layout-logo .box {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+
+    cursor: default;
+    /* default : 플랫폼에 따라 다른 기본 커서. 보통 화살표 */
+}
+
+#layout-logo .title {
+    color: rgba(64, 64, 64, 1);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 173%;
+}
+
+#layout-logo .icon {
+    width: 30px;
+    height: 30px;
+
+    background-image: url('/public/images/logo.png');
+    background-size: 100% 100%; /* 위에서 지정한 크기를 따라가도록 */
+}
+
+/* logo ====================================================================== */
+
+#layout-top {
+    grid-area: top;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: 1px solid rgba(233, 236, 239, 1);
+    padding: 0 24px;
+
+    user-select: none;
+}
+
+#layout-top .path {
+    color: rgba(64, 64, 64, 1);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* top ====================================================================== */
+
+#layout-side-navigation {
+    grid-area: side;
 }
