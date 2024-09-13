@@ -1,6 +1,8 @@
 import React, { ChangeEvent } from 'react'
 import './style.css';
 
+//# 버튼이 존재하는 입력창 컴포넌트
+
 interface Props {
     label: string;
     type: 'text' | 'password';
