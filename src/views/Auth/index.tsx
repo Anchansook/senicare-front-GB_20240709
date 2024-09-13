@@ -2,8 +2,8 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import './style.css';
 import InputBox from 'src/components/InputBox';
 import axios from 'axios';
-import { idCheckRequest, telAuthRequest } from 'src/apis';
-import { IdCheckRequestDto, TelAuthRequestDto } from 'src/apis/dto/request/auth';
+import { idCheckRequest, telAuthCheckRequest, telAuthRequest } from 'src/apis';
+import { IdCheckRequestDto, TelAuthCheckRequestDto, TelAuthRequestDto } from 'src/apis/dto/request/auth';
 import { ResponseDto } from 'src/apis/dto/response';
 
 //& ctrl + shift + l : 함께 선택되어 바꿀 수 있음
@@ -200,12 +200,15 @@ function SignUp({ onPathChange }: AuthComponentProps) {
     const onAuthNumberCheckClickHandler = () => {
         if (!authNumber) return;
 
-        const isMatched = authNumber === 'Q1W2';
-        const message = isMatched ? '인증번호가 확인되었습니다.' : '인증번호가 일치하지 않습니다.'
+        const requestBody: TelAuthCheckRequestDto = { telNumber, authNumber };
+        telAuthCheckRequest(requestBody).then();
 
-        setAuthNumberMessage(message);
-        setAuthNumberMessageError(!isMatched);
-        setCheckedAuthNumber(isMatched); // 인증번호가 확인되었다는 상태유지
+        // const isMatched = authNumber === 'Q1W2';
+        // const message = isMatched ? '인증번호가 확인되었습니다.' : '인증번호가 일치하지 않습니다.'
+
+        // setAuthNumberMessage(message);
+        // setAuthNumberMessageError(!isMatched);
+        // setCheckedAuthNumber(isMatched); // 인증번호가 확인되었다는 상태유지
     };
 
     // ===========================================================================================
