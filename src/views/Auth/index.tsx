@@ -9,6 +9,7 @@ import { SignInResponseDto } from 'src/apis/dto/response/auth';
 import { useCookies } from 'react-cookie';
 import { ACCESS_TOKEN, CS_ABSOLUTE_PATH, ROOT_PATH } from 'src/constants';
 import { useNavigate } from 'react-router';
+import { useSearchParams } from 'react-router-dom';
 
 //& ctrl + shift + l : 함께 선택되어 바꿀 수 있음
 
@@ -19,14 +20,22 @@ interface SnsContainerProps {
     type: AuthPath;
 };
 
+// component: SNS 로그인 회원가입 컴포넌트 //
 function SnsContainer({ type }: SnsContainerProps) {
 
+    // event handler: SNS 버튼 클릭 이벤트 핸들러 처리 //
+    // SNS 로그인 창으로 이동
+    const onSnsButtonClickHandler = (sns: 'kakao' | 'naver') => {
+        window.location.href = `http://localhost:4000/api/v1/auth/sns-sign-in/${sns}`;
+    };
+
+    // render: SNS 로그인 회원가입 컴포넌트 렌더링 //
     return (
         <div className="sns-container">
             <div className="title">SNS {type}</div>
             <div className="sns-button-container">
-                <div className={`sns-button ${type === '회원가입' ? 'md ' : ''} kakao`}></div>
-                <div className={`sns-button ${type === '회원가입' ? 'md ' : ''} naver`}></div>
+                <div className={`sns-button ${type === '회원가입' ? 'md ' : ''} kakao`} onClick={() => onSnsButtonClickHandler('kakao')}></div>
+                <div className={`sns-button ${type === '회원가입' ? 'md ' : ''} naver`} onClick={() => onSnsButtonClickHandler('naver')}></div>
             </div>
         </div>
     )
@@ -40,6 +49,11 @@ interface AuthComponentProps {
 
 // component: 회원가입 화면 컴포넌트 //
 function SignUp({ onPathChange }: AuthComponentProps) {
+
+    // state: Query Parameter 상태 //
+    const [queryParam] = useSearchParams();
+    const snsId = queryParam.get('snsId');
+    const joinPath = queryParam.get('joinPath');
 
     // state: 요양사 입력 정보 상태 //
     const [name, setName] = useState<string>('');
@@ -71,6 +85,9 @@ function SignUp({ onPathChange }: AuthComponentProps) {
     const [isCheckedPassword, setCheckedPassword] = useState<boolean>(false);
     const [isSend, setSend] = useState<boolean>(false);
     const [isCheckedAuthNumber, setCheckedAuthNumber] = useState<boolean>(false);
+
+    // variable: SNS 회원가입 여부 //
+    const isSnsSignUp = snsId !== null && joinPath !== null;
 
     // variable: 회원가입 가능 여부 //
     const isComplete = name && id && isCheckedId && password && passwordCheck && isMatchedPassword && isCheckedPassword
@@ -258,7 +275,8 @@ function SignUp({ onPathChange }: AuthComponentProps) {
             password,
             telNumber,
             authNumber,
-            joinPath: 'home'
+            joinPath: joinPath ? joinPath : 'home',
+            snsId
         };
 
         signUpRequest(requestBody).then(signUpResponse);
@@ -282,8 +300,8 @@ function SignUp({ onPathChange }: AuthComponentProps) {
                 <div className="title">시니케어</div>
                 <div className="logo"></div>
             </div>
-
-            <SnsContainer type='회원가입' />
+            {/* SNS 로그인이 안되어있을 때 SNS 컨테이너가 보임 */}
+            {!isSnsSignUp && <SnsContainer type='회원가입' />}
 
             <div style={{ width: '64px' }} className="divider"></div>
 
@@ -405,6 +423,16 @@ function SignIn({ onPathChange }: AuthComponentProps) {
 
 // component: 인증 화면 컴포넌트 //
 export default function Auth() {
+
+    // state: Query Parameter 상태 //
+    const [queryParam] = useSearchParams();
+    const snsId = queryParam.get('snsId');
+    const joinPath = queryParam.get('joinPath');
+
+    // effect: 첫 로드시에 Query Param의 snsId와 joinPath 존재 시 회원가입 화면전환 함수 //
+    useEffect(() => {
+        if (snsId && joinPath) setPath('회원가입');
+    }, []);
 
     // state: 선택 화면 상태 //
     const [path, setPath] = useState<AuthPath>('로그인');
