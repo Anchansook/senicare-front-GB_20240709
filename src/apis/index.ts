@@ -23,6 +23,7 @@ const GET_SIGN_IN_API_URL = `${NURSE_MODUEL_URL}/sign-in`;
 const TOOL_MODULE_URL = `${SENICARE_API_DOMAIN}/api/v1/tool`;
 
 const POST_TOOL_API_URL = `${TOOL_MODULE_URL}`;
+const GET_TOOL_LIST_API_URL = `${TOOL_MODULE_URL}`;
 
 // function: Authorization Bearer 헤더 //
 const bearerAuthorization = (accessToken: string) => ({ headers: { 'Authorization': `Bearer ${accessToken}` } });
@@ -98,6 +99,15 @@ export const getSignInRequest = async (accessToken: string) => {
 export const postToolRequest = async (requestBody: PostToolRequestDto, accessToken: string) => {
     const responseBody = await axios.post(POST_TOOL_API_URL, requestBody, bearerAuthorization(accessToken))
         .then(responseDataHandler<ResponseDto>)
+        .catch(responseErrorHandler);
+
+    return responseBody;
+};
+
+// function: get tool list 요청 함수 //
+export const getToolListRequest = async (accessToken: string) => {
+    const responseBody = await axios.get(GET_TOOL_LIST_API_URL, bearerAuthorization(accessToken))
+        .then(responseDataHandler<PostToolRequestDto>)
         .catch(responseErrorHandler);
 
     return responseBody;
