@@ -113,7 +113,7 @@ export default function MainLayout() {
             <Logo />
             <Top />
             <SideNavigation />
-            <div id='main-wrapper'>
+            <div id='main-wrapper'> 
                 <Outlet /> {/* 메인 콘텐츠 별로 보여주는 컴포넌트 */}
             </div>
         </div>

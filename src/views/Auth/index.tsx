@@ -11,6 +11,8 @@ import { ACCESS_TOKEN, CS_ABSOLUTE_PATH, ROOT_PATH } from 'src/constants';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 
+//# 회원가입 & 로그인
+
 //& ctrl + shift + l : 함께 선택되어 바꿀 수 있음
 
 type AuthPath = '회원가입' | '로그인';
