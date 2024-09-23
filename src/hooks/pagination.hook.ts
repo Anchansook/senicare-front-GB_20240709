@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-// variable: 페이지 당 아이템 수 //
+// variable: 페이지 당 보여줄 아이템 수 //
 const ITEMS_PER_PAGE = 5;
-// variable: 섹션 당 페이지 수 //
+// variable: 섹션 당 표시할 페이지 수 //
 const PAGES_PER_SECTION = 5;
 
 const usePagination = <T>() => {
@@ -27,8 +27,13 @@ const usePagination = <T>() => {
         const totalSection = Math.ceil(totalPage / PAGES_PER_SECTION);
         setTotalSection(totalSection);
 
-        setCurrentPage(1);
-        setCurrentSection(1);
+        if (!totalCount) {
+            setCurrentPage(0);
+            setCurrentSection(0);
+        } else {
+            setCurrentPage(1);
+            setCurrentSection(1);
+        }
     };
 
     // function: 페이지 변경 함수 //
@@ -45,6 +50,11 @@ const usePagination = <T>() => {
 
     // function: 섹션 변경 함수 //
     const initPageList = (totalPage: number) => {
+        if (!totalPage) {
+            setPageList([]);
+            return;
+        }
+
         const startPage = PAGES_PER_SECTION * currentSection - (PAGES_PER_SECTION - 1);
         let endPage = PAGES_PER_SECTION * currentSection;
         if (endPage > totalPage) endPage = totalPage;
@@ -63,7 +73,7 @@ const usePagination = <T>() => {
 
     // event handler: 이전 섹션 클릭 이벤트 처리 함수 //
     const onPreSectionClickHandler = () => {
-        if (currentSection === 1) return;
+        if (currentSection <= 1) return;
         setCurrentSection(currentSection - 1);
         setCurrentPage((currentSection - 1) * PAGES_PER_SECTION);
     };

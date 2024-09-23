@@ -105,8 +105,13 @@ function PostBox({ unShow }: PostBoxProps) {
 
 }
 
+// interface: 용품 수정 컴포넌트 Properties //
+interface PatchBoxProps {
+    unShow: () => void;
+}
+
 // component: 용품 수정 컴포넌트 //
-function PatchBox() {
+function PatchBox({ unShow }: PatchBoxProps) {
 
     // render: 용품 수정 컴포넌트 렌더링 //
     return (
@@ -126,7 +131,7 @@ function PatchBox() {
                 </div>
             </div>
             <div className='button second'>수정</div>
-            <div className='button disable'>취소</div>
+            <div className='button disable' onClick={unShow}>취소</div>
         </div>
     )
 
@@ -135,10 +140,11 @@ function PatchBox() {
 // interface: 용품 리스트 아이템 컴포넌트 Properties //
 interface TableRowProps {
     tool: Tool
+    onUpdateButtonClickHandler: (toolNumber: number) => void;
 }
 
 // component: 용품 리스트 아이템 컴포넌트 //
-function TableRow({ tool }: TableRowProps) {
+function TableRow({ tool, onUpdateButtonClickHandler }: TableRowProps) {
 
     // render: 용품 리스트 아이템 컴포넌트 렌더링 //
     return (
@@ -149,7 +155,7 @@ function TableRow({ tool }: TableRowProps) {
             <div className='td-count'>{tool.count}</div>
             <div className='td-buttons'>
                 <div className='td-edit'>
-                    <div className='icon-button edit'></div>
+                    <div className='icon-button edit' onClick={() => onUpdateButtonClickHandler(tool.toolNumber)}></div>
                 </div>
                 <div className='td-delete'>
                     <div className='icon-button trash'></div>
@@ -173,9 +179,10 @@ export default function MM() {
     // state: 검색어 상태 //
     const [searchWord, setSearchWord] = useState<string>('');
 
-    // state: 원본 리스트 상태 //
+    // state: 원본 리스트 상태(상태 유지를 위한) //
     const [originalList, setOriginalList] = useState<Tool[]>([]);
 
+    //* 커스텀 훅 가져오기
     const {
         currentPage, totalPage, totalCount, viewList, pageList,
         setTotalList, initViewList, initPageList,
@@ -203,10 +210,18 @@ export default function MM() {
     // function: 등록 박스 뷰 상태 변경 함수 //
     const unShowPostBox = () => setShowPostBox(false);
 
+    // function: 수정 박스 뷰 상태 변경 함수 //
+    const unShowPatchBox = () => setShowPatchBox(false);
+
     // event handler: 등록 버튼 클릭 이벤트 처리 함수 //
     const onPostButtonClickHandler = () => {
         setShowPostBox(true);
         setShowPatchBox(false); // 2개 다 나오는 것을 방지하기 위해
+    };
+
+    // event handler: 수정 버튼 클릭 이벤트 처리 함수 //
+    const onUpdateButtonClickHandler = (toolNumber: number) => {
+        setShowPatchBox(true);
     };
 
     // event handler: 검색어 변경 이벤트 처리 함수 //
@@ -234,7 +249,7 @@ export default function MM() {
     return (
         <div id='mm-wrapper'>
             {showPostBox && <PostBox unShow={unShowPostBox} />}
-            {showPatchBox && <PatchBox />}
+            {showPatchBox && <PatchBox unShow={unShowPatchBox} />}
             <div className='top'>
                 <div className='top-text'>전체 <span className='emphasis'>{totalCount}건</span> | 페이지 <span className='emphasis'>{currentPage}/{totalPage}</span></div>
                 {!showPostBox && !showPatchBox && 
@@ -253,7 +268,7 @@ export default function MM() {
                             <div className='td-delete'>삭제</div>
                         </div>
                     </div>
-                    {viewList.map((tool, index) => <TableRow key={index} tool={tool} />)}
+                    {viewList.map((tool, index) => <TableRow key={index} tool={tool} onUpdateButtonClickHandler={onUpdateButtonClickHandler} />)}
                 </div>
             </div>
             <div className='bottom'>
