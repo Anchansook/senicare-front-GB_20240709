@@ -166,7 +166,34 @@ export default function MM() {
                     <div className='button primary' onClick={onPostButtonClickHandler}>등록</div>
                 }
             </div>
-            <div className='main'></div>
+            <div className='main'>
+                <div className='table'>
+                    <div className='th'>
+                        <div className='td-tool-number'>용품번호</div>
+                        <div className='td-name'>용품명</div>
+                        <div className='td-purpose'>용도</div>
+                        <div className='td-count'>개수</div>
+                        <div className='td-buttons'>
+                            <div className='td-edit'>수정</div>
+                            <div className='td-delete'>삭제</div>
+                        </div>
+                    </div>
+                    <div className='tr'>
+                        <div className='td-tool-number'>용품번호</div>
+                        <div className='td-name'>용품명</div>
+                        <div className='td-purpose'>용도</div>
+                        <div className='td-count'>개수</div>
+                        <div className='td-buttons'>
+                            <div className='td-edit'>
+                                <div className='icon-button edit'></div>
+                            </div>
+                            <div className='td-delete'>
+                                <div className='icon-button trash'></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div className='bottom'></div>
         </div>
     )
