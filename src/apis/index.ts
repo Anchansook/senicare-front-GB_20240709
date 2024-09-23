@@ -4,6 +4,7 @@ import { ResponseDto } from "./dto/response";
 import { SignInResponseDto } from "./dto/response/auth";
 import { GetSignInResponseDto } from "./dto/response/nurse";
 import { PostToolRequestDto } from "./dto/request/tool";
+import { GetToolListResponseDto } from "./dto/response/tool";
 
 // variable: API URL 상수 //
 const SENICARE_API_DOMAIN = 'http://localhost:4000';
@@ -107,7 +108,7 @@ export const postToolRequest = async (requestBody: PostToolRequestDto, accessTok
 // function: get tool list 요청 함수 //
 export const getToolListRequest = async (accessToken: string) => {
     const responseBody = await axios.get(GET_TOOL_LIST_API_URL, bearerAuthorization(accessToken))
-        .then(responseDataHandler<PostToolRequestDto>)
+        .then(responseDataHandler<GetToolListResponseDto>)
         .catch(responseErrorHandler);
 
     return responseBody;
