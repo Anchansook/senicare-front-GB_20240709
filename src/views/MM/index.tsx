@@ -2,11 +2,11 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import './style.css';
 import { useCookies } from 'react-cookie';
 import { ACCESS_TOKEN } from 'src/constants';
-import { PostToolRequestDto } from 'src/apis/dto/request/tool';
-import { getToolListRequest, postToolRequest } from 'src/apis';
+import { PatchToolReqeusetDto, PostToolRequestDto } from 'src/apis/dto/request/tool';
+import { getToolListRequest, getToolRequest, patchToolReqeust, postToolRequest } from 'src/apis';
 import { ResponseDto } from 'src/apis/dto/response';
 import { Tool } from 'src/types';
-import { GetToolListResponseDto } from 'src/apis/dto/response/tool';
+import { GetToolListResponseDto, GetToolResponseDto } from 'src/apis/dto/response/tool';
 import { usePagination } from 'src/hooks';
 import Pagination from 'src/components/Pagination';
 
@@ -115,10 +115,53 @@ interface PatchBoxProps {
 // component: 용품 수정 컴포넌트 //
 function PatchBox({ toolNumber, unShow }: PatchBoxProps) {
 
+    // state: cookie 상태 //
+    const [cookies] = useCookies();
+
     // state: 용품 정보 상태 //
     const [name, setName] = useState<string>('');
     const [purpose, setPurpose] = useState<string>('');
     const [count, setCount] = useState<string>('');
+
+    // function: get tool response 처리 함수 //
+    const getToolResponse = (responseBody: GetToolResponseDto | ResponseDto | null) => {
+        const message = 
+            !responseBody ? '서버에 문제가 있습니다.' :
+            responseBody.code === 'VF' ? '잘못된 접근입니다.' :
+            responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+            responseBody.code === 'NT' ? '존재하지 않는 용품입니다.' :
+            responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+        const isSuccessed = responseBody !== null && responseBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            unShow();
+            return;
+        }
+
+        const { name, purpose, count } = responseBody as GetToolResponseDto;
+        setName(name);
+        setPurpose(purpose);
+        setCount(String(count));
+    };
+
+    // function: patch tool response 처리 함수 //
+    const patchToolResponse = (responseBody: ResponseDto | null) => {
+        const message =
+            !responseBody ? '서버에 문제가 있습니다.' :
+            responseBody.code === 'VF' ? '모든 값을 입력해주세요.' :
+            responseBody.code === 'AF' ? '잘못된 접근입니다.' :
+            responseBody.code === 'NT' ? '존재하지 않는 용품입니다.' :
+            responseBody.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+        const isSuccessed = responseBody !== null && responseBody.code === 'SU';
+        if (!isSuccessed) {
+            alert(message);
+            return;
+        }
+
+        unShow();
+    };
 
     // event handler: 용품 이름 변경 이벤트 처리 함수 //
     const onNameChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -141,9 +184,29 @@ function PatchBox({ toolNumber, unShow }: PatchBoxProps) {
         setCount(value);
     };
 
+    // event handler: 수정 버튼 클릭 이벤트 처리 함수 //
+    const onUpdateButtonClickHandler = () => {
+        if (!name || !purpose || !count) {
+            alert('모든 값을 입력해주세요.');
+            return;
+        }
+
+        const accessToken = cookies[ACCESS_TOKEN];
+        if (!accessToken) return;
+
+        const requestBody: PatchToolReqeusetDto = {
+            name, purpose, count: Number(count)
+        };
+        patchToolReqeust(requestBody, toolNumber, accessToken).then(patchToolResponse);
+    };
+
     // effect: toolNumber가 변경될 시 실행할 함수 //
     useEffect(() => {
-        // 용품 정보 보기를 호출
+        // 요청 헤더에 Bearer 인증 토큰을 포함하여 용품 정보 보기를 호출
+        const accessToken = cookies[ACCESS_TOKEN];
+        if (!accessToken) return;
+
+        getToolRequest(toolNumber, accessToken).then(getToolResponse);
     }, [toolNumber]);
 
     // render: 용품 수정 컴포넌트 렌더링 //
@@ -163,7 +226,7 @@ function PatchBox({ toolNumber, unShow }: PatchBoxProps) {
                     <input className='input' value={count} placeholder='개수를 입력해주세요' onChange={onCountChangeHandler} />
                 </div>
             </div>
-            <div className='button second'>수정</div>
+            <div className='button second' onClick={onUpdateButtonClickHandler}>수정</div>
             <div className='button disable' onClick={unShow}>취소</div>
         </div>
     )
