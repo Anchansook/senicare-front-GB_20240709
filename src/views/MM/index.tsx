@@ -381,6 +381,7 @@ export default function MM() {
 
     // effect: 컴포넌트 로드 시 용품 리스트 불러오기 함수 //
     useEffect(getToolList ,[]);
+    // 함수 호출 시에는 콜백 함수X, ()괄호 X 
 
     // render: 용품 관리 리스트 컴포넌트 렌더링 //
     return (
