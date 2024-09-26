@@ -1,5 +1,7 @@
-import React, { ChangeEvent, useRef, useState } from 'react'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import './style.css';
+import { Address, useDaumPostcodePopup } from 'react-daum-postcode';
+import { useSignInUserStore } from 'src/stores';
 
 // variable: 기본 프로필 이미지 URL //
 const defaultProfileImageUrl = 'https://blog.kakaocdn.net/dn/4CElL/btrQw18lZMc/Q0oOxqQNdL6kZp0iSKLbV1/img.png';
@@ -7,11 +9,17 @@ const defaultProfileImageUrl = 'https://blog.kakaocdn.net/dn/4CElL/btrQw18lZMc/Q
 // component: 고객 정보 작성 화면 컴포넌트 //
 export default function CSWrite() {
 
+    // state: 로그인 유저 상태 //
+    const { signInUser } = useSignInUserStore();
+
     // state: 이미지 입력 참조 //
     const imageInputRef = useRef<HTMLInputElement | null>(null);
 
     // state: 프로필 미리보기 URL 상태 //
     const [previewUrl, setPreviewUrl] = useState<string>(defaultProfileImageUrl);
+
+    // state: 모달 팝업 상태 //
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     // state: 고객 정보 상태 //
     const [name, setName] = useState<string>('');
@@ -21,6 +29,17 @@ export default function CSWrite() {
     const [chargerName, setChargerName] = useState<string>('');
     const [address, setAddress] = useState<string>('');
     const [location, setLocation] = useState<string>('');
+
+    // function: 다음 주소 검색 팝업 함수 //
+    const daumPostcodePopup = useDaumPostcodePopup();
+
+    // function: 다음 주소 검색 완료 처리 함수 //
+    const daumPostcodeComplete = (result: Address) => {
+        const { address, sigungu } = result;
+        setAddress(address);
+        setLocation(sigungu);
+        console.log(sigungu);
+    };
 
     // event handler: 프로필 이미지 클릭 이벤트 처리 //
     const onProfileImageClickHandler = () => {
@@ -60,6 +79,31 @@ export default function CSWrite() {
     };
 
     //* 주소 검색 : npm -> react-daum-postcode 설치
+    // event handler: 주소 검색 버튼 클릭 이벤트 처리 //
+    const onAddressButtonClickHandler = () => {
+        daumPostcodePopup({ onComplete: daumPostcodeComplete });
+    };
+
+    // event handler: 담당자 본인 선택 이벤트 처리 //
+    const onChargerSelfButtonClickHandler = () => {
+        if (!signInUser) return;
+        setCharger(signInUser.userId);
+        setChargerName(signInUser.name);
+    };
+
+    // event handler: 모달 오픈 이벤트 처리 //
+    const onModalOpenHandler = () => {
+        setModalOpen(!modalOpen);
+    };
+
+    // effect: 모달 오픈 상태가 바뀔 시 스크롤 여부 함수 //
+    useEffect(() => {
+        document.body.style.overflow = modalOpen ? 'hidden' : 'auto';
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+        // 계속 상태가 유지가 되기 때문에 언마운트 시 되돌리는 작업 필요 (return () => {})
+    }, [modalOpen]);
 
     // render: 고객 정보 작성 화면 컴포넌트 렌더링 //
     return (
@@ -79,17 +123,17 @@ export default function CSWrite() {
                     </div>
                     <div className='input-box'>
                         <div className='input-label'>담당자</div>
-                        <input className='input' readOnly placeholder='담당자를 선택하세요.' />
+                        <input className='input' value={chargerName} readOnly placeholder='담당자를 선택하세요.' />
                         <div className='button-box'>
-                            <div className='button second'>자신</div>
-                            <div className='button disable'>검색</div>
+                            <div className='button second' onClick={onChargerSelfButtonClickHandler}>자신</div>
+                            <div className='button disable' onClick={onModalOpenHandler}>검색</div>
                         </div>
                     </div>
                     <div className='input-box'>
                         <div className='input-label'>주소</div>
-                        <input className='input' readOnly placeholder='주소를 선택하세요.' />
+                        <input className='input' value={address} readOnly placeholder='주소를 선택하세요.' />
                         <div className='button-box'>
-                            <div className='button disable'>검색</div>
+                            <div className='button disable' onClick={onAddressButtonClickHandler}>검색</div>
                         </div>
                     </div>
                 </div>
@@ -98,6 +142,23 @@ export default function CSWrite() {
                 <div className='button primary'>목록</div>
                 <div className='button second'>등록</div>
             </div>
+            {modalOpen &&
+                <div className='modal'>
+                    <div className='modal-box'>
+                        <div className='modal-top'>
+                            <div className='modal-label'>담당자 이름</div>
+                            <div className='modal-input-box'>
+                                <input />
+                                <div className='button disable'>검색</div>
+                            </div>
+                        </div>
+                        <div className='modal-main'></div>
+                        <div className='modal-bottom'>
+                            <div className='button disable' onClick={onModalOpenHandler}>닫기</div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     )
 }
