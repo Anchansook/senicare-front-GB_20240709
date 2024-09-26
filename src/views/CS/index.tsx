@@ -5,7 +5,7 @@ import Pagination from 'src/components/Pagination';
 import { Customer } from 'src/types';
 import { useSignInUserStore } from 'src/stores';
 import { useCookies } from 'react-cookie';
-import { ACCESS_TOKEN, CS_DETAIL_ABSOLUTE_PATH, CS_UPDATE_ABSOLUTE_PATH } from 'src/constants';
+import { ACCESS_TOKEN, CS_DETAIL_ABSOLUTE_PATH, CS_UPDATE_ABSOLUTE_PATH, CS_WRITE_ABSOLUTE_PATH } from 'src/constants';
 import { deleteCustomerRequest, getCustomerListRequest } from 'src/apis';
 import { GetCustomerListResponseDto } from 'src/apis/dto/response/customer';
 import { ResponseDto } from 'src/apis/dto/response';
@@ -80,7 +80,7 @@ function TableRow({ customer, getCustomerList }: TableRowProps) {
         <div className='tr' onClick={onDetailButtonClickHandler}>
             <div className='td-customer-number'>{customer.customerNumber}</div>
             <div className='td-customer-name'>{customer.name}</div>
-            <div className='td-customer-age'>{calculateAge(customer.birth)}</div>
+            <div className='td-customer-age'>{calculateAge(customer.birth)}</div> {/* 이 작업시 npm -> dayjs 설치 필요 */}
             <div className='td-customer-location'>{customer.location}</div>
             <div className='td-customer-charger'>{customer.chargerName}</div>
             {isCharger &&
@@ -116,6 +116,9 @@ export default function CS() {
         setTotalList, initViewList, ...paginationProps // 페이지네이션 프롭스로만 필요하기 때문에 그냥 묶 / 스프레드 연산자로 묶어서 가져올 수 있음
     } = usePagination<Customer>();
 
+    // function: 네비게이터 함수 //
+    const navigator = useNavigate();
+
     // function: customer list 불러오기 함수 //
     const getCustomerList = () => {
         const accessToken = cookies[ACCESS_TOKEN];
@@ -141,6 +144,11 @@ export default function CS() {
         setOriginalList(customers);
     };
 
+    // event handler: 등록 버튼 클릭 이벤트 처리 함수 //
+    const onPostButtonClickHandler = () => {
+        navigator(CS_WRITE_ABSOLUTE_PATH);
+    };
+
     // event handler: 검색어 변경 이벤트 처리 함수 //
     const onSearchWordChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
@@ -162,6 +170,7 @@ export default function CS() {
         <div id='cs-wrapper'>
             <div className='top'>
                 <div className='top-text'>전체 <span className='emphasis'>{totalCount}건</span> | 페이지 <span className='emphasis'>{currentPage}/{totalPage}</span></div>
+                <div className='button primary' onClick={onPostButtonClickHandler}>등록</div>
             </div>
             <div className='main'>
                 <div className='table'>
