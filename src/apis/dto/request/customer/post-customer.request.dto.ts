@@ -1,6 +1,6 @@
 //# 고객 등록 요청 데이터 전달 객체 정의
 
-// interface: post nurse request body dto //
+// interface: post customer request body dto //
 export default interface PostCustomerRequestDto {
     profileImage: string;
     name: string;
