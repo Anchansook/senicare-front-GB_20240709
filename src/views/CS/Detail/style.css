@@ -17,6 +17,11 @@
     gap: 10px;
 }
 
+#cs-detail-wrapper .middle-bottom {
+    display: flex;
+    justify-content: center;
+}
+
 #cs-detail-wrapper .bottom {
     display: flex;
     justify-content: space-between;
@@ -27,7 +32,7 @@
     width: 134px;
     height: 180px;
 
-    background-color: orange;
+    /* background-color: orange; */
     background-size: cover;
     background-position: 50% 50%;
 }
