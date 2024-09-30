@@ -36,6 +36,9 @@ export default function CSDetail() {
         setTotalList, initViewList, ...paginationProps
     } = usePagination<CareRecord>();
 
+    // state: 용품 선택 셀렉터 오픈 여부 상태 //
+    const [showSelector, setShowSelector] = useState<boolean>(false);
+
     // variable: 담당자 여부 //
     const isCharger = charger === signInUser?.userId;
 
@@ -102,6 +105,11 @@ export default function CSDetail() {
         }
 
         navigator(CS_ABSOLUTE_PATH);
+    };
+
+    // event handler: 셀렉터 오픈 이벤트 처리 //
+    const onSelectorClickHandler = () => {
+        setShowSelector(!showSelector);
     };
 
     // event handler: 목록 버튼 클릭 이벤트 처리 //
@@ -200,12 +208,25 @@ export default function CSDetail() {
                     </div>
                     <div className='record-write-tool-box'>
                         <div className='input-box'>
-                            <div className='label'>사용 용품</div>
+                            <div className='label'>사용용품</div>
                             {/* select */}
-                            <div className='selector close'>
-                                <div className='selected-item'>사용 용품</div>
-                                <div className='arrow-down-button'></div>
-                            </div>
+                            {showSelector ? 
+                                <div className='selector open'>
+                                    <div className='selected-item'>사용용품</div>
+                                    <div className='arrow-up-button' onClick={onSelectorClickHandler}></div>
+                                    <div className='selector-box'>
+                                        <div className='selector-option'>휠체어</div>
+                                        <div className='selector-option'>돋보기</div>
+                                        <div className='selector-option'>지팡이</div>
+                                        <div className='selector-option'>온도계</div>
+                                    </div>
+                                </div> : 
+                                <div className='selector close'>
+                                    <div className='selected-item'>사용용품</div>
+                                    <div className='arrow-down-button' onClick={onSelectorClickHandler}></div>
+                                </div> 
+                            }
+                            {/* 여유되면 body를 눌렀을 때 셀렉터가 닫히도록 작업 */}
                         </div>
                         <div className='input-box'>
                             <div className='label'>개수</div>
