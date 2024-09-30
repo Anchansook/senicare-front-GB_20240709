@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, MouseEvent, useEffect, useState } from 'react'
 import './style.css';
 import { useNavigate, useParams } from 'react-router';
 import { useCookies } from 'react-cookie';
@@ -12,6 +12,8 @@ import { CareRecord, Tool } from 'src/types';
 import { GetToolListResponseDto } from 'src/apis/dto/response/tool';
 import { PostCareRecordRequestDto } from 'src/apis/dto/request/customer';
 import Pagination from 'src/components/Pagination';
+
+//* useState 공유 : export X, Props로 전달 or zustand!
 
 // component: 고객 정보 상세 보기 컴포넌트 //
 export default function CSDetail() {
@@ -347,11 +349,12 @@ export default function CSDetail() {
                                         <div className='arrow-down-button' onClick={onSelectorClickHandler}></div>
                                     </div> 
                                 }
-                                {/* 여유되면 body를 눌렀을 때 셀렉터가 닫히도록 작업 */}
+                                {/* 나중에 body를 눌렀을 때 셀렉터가 닫히도록 작업 */}
                             </div>
                             <div className='input-box'>
                                 <div className='label'>개수</div>
                                 <input className='input' value={usedToolCount} placeholder='개수를 입력하세요.' onChange={onUsedToolCountChangeHandler} />
+                                {/* 나중에 선택된 용품이 없다면 아예 비활성화 되도록 작업해보기 */}
                             </div>
                         </div>
                     </div>
