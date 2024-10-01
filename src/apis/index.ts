@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { IdCheckRequestDto, SignInRequestDto, SignUpRequestDto, TelAuthCheckRequestDto, TelAuthRequestDto } from "./dto/request/auth";
 import { ResponseDto } from "./dto/response";
 import { SignInResponseDto } from "./dto/response/auth";
-import { GetNurseListResponseDto, GetSignInResponseDto } from "./dto/response/nurse";
+import { GetChargedCustomerResponseDto, GetNurseListResponseDto, GetNurseResponseDto, GetSignInResponseDto } from "./dto/response/nurse";
 import { PatchToolReqeusetDto, PostToolRequestDto } from "./dto/request/tool";
 import { GetToolListResponseDto, GetToolResponseDto } from "./dto/response/tool";
 import { GetCareRecordResponseDto, GetCustomerListResponseDto, GetCustomerResponseDto } from "./dto/response/customer";
@@ -22,7 +22,9 @@ const SIGN_IN_API_URL = `${AUTH_MODULE_URL}/sign-in`;
 const NURSE_MODUEL_URL = `${SENICARE_API_DOMAIN}/api/v1/nurse`;
 
 const GET_NURSE_LIST_API_URL = `${NURSE_MODUEL_URL}`;
+const GET_NURSE_API_URL = (userId: string) => `${NURSE_MODUEL_URL}/${userId}`;
 const GET_SIGN_IN_API_URL = `${NURSE_MODUEL_URL}/sign-in`;
+const GET_CHARGED_CUSTOMER_API_URL = (nurseId: string) => `${NURSE_MODUEL_URL}/${nurseId}/customers`;
 
 const TOOL_MODULE_URL = `${SENICARE_API_DOMAIN}/api/v1/tool`;
 
@@ -63,7 +65,6 @@ export const idCheckRequest = async (requestBody: IdCheckRequestDto) => {
     const responseBody = await axios.post(ID_CHECK_API_URL, requestBody)
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -72,7 +73,6 @@ export const telAuthRequest = async (requestBody: TelAuthRequestDto) => {
     const responseBody = await axios.post(TEL_AUTH_API_URL, requestBody)
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -81,7 +81,6 @@ export const telAuthCheckRequest = async (requestBody: TelAuthCheckRequestDto) =
     const responseBody = await axios.post(TEL_AUTH_CHECK_API_URL, requestBody)
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -90,7 +89,6 @@ export const signUpRequest = async (requestBody: SignUpRequestDto) => {
     const responseBody = await axios.post(SIGN_UP_API_URL, requestBody)
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-    
     return responseBody;
 };
 
@@ -99,7 +97,6 @@ export const signInRequest = async (requestBody: SignInRequestDto | null) => {
     const responseBody = await axios.post(SIGN_IN_API_URL, requestBody)
         .then(responseDataHandler<SignInResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -108,7 +105,14 @@ export const getNurseListRequest = async (accessToken: string) => {
     const responseBody = await axios.get(GET_NURSE_LIST_API_URL, bearerAuthorization(accessToken))
         .then(responseDataHandler<GetNurseListResponseDto>)
         .catch(responseErrorHandler);
-        
+    return responseBody;
+};
+
+// function: get nurse 요청 함수 //
+export const getNurseRequest = async (userId: string, accessToken: string) => {
+    const responseBody = await axios.get(GET_NURSE_API_URL(userId), bearerAuthorization(accessToken))
+        .then(responseDataHandler<GetNurseResponseDto>)
+        .catch(responseErrorHandler);
     return responseBody;
 };
 
@@ -117,7 +121,14 @@ export const getSignInRequest = async (accessToken: string) => {
     const responseBody = await axios.get(GET_SIGN_IN_API_URL, bearerAuthorization(accessToken))
         .then(responseDataHandler<GetSignInResponseDto>)
         .catch(responseErrorHandler);
+    return responseBody;
+};
 
+// function: get charged customer 요청 함수 //
+export const getChargedCustomerRequest = async (nurseId: string, accessToken: string) => {
+    const responseBody = await axios.get(GET_CHARGED_CUSTOMER_API_URL(nurseId), bearerAuthorization(accessToken))
+        .then(responseDataHandler<GetChargedCustomerResponseDto>)
+        .catch(responseErrorHandler);
     return responseBody;
 };
 
@@ -126,7 +137,6 @@ export const postToolRequest = async (requestBody: PostToolRequestDto, accessTok
     const responseBody = await axios.post(POST_TOOL_API_URL, requestBody, bearerAuthorization(accessToken))
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -135,7 +145,6 @@ export const getToolListRequest = async (accessToken: string) => {
     const responseBody = await axios.get(GET_TOOL_LIST_API_URL, bearerAuthorization(accessToken))
         .then(responseDataHandler<GetToolListResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -144,7 +153,6 @@ export const getToolRequest = async (toolNumber: number | string, accessToken: s
     const responseBody = await axios.get(GET_TOOL_API_URL(toolNumber), bearerAuthorization(accessToken))
         .then(responseDataHandler<GetToolResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 }; 
 
@@ -153,7 +161,6 @@ export const patchToolReqeust = async (requestBody: PatchToolReqeusetDto, toolNu
     const responseBody = await axios.patch(PATCH_TOOL_API_URL(toolNumber), requestBody, bearerAuthorization(accessToken))
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -162,7 +169,6 @@ export const deleteToolRequest = async (toolNumber: number | string, accessToken
     const responseBody = await axios.delete(DELETE_TOOL_API_URL(toolNumber), bearerAuthorization(accessToken))
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -171,7 +177,6 @@ export const postCustomerRequest = async (requestBody: PostCustomerRequestDto, a
     const responseBody = await axios.post(POST_CUSTOMER_API_URL, requestBody, bearerAuthorization(accessToken))
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-    
     return responseBody;
 };
 
@@ -180,7 +185,6 @@ export const getCustomerListRequest = async (accessToken: string) => {
     const responseBody = await axios.get(GET_CUSTOMER_LIST_API_URL, bearerAuthorization(accessToken))
         .then(responseDataHandler<GetCustomerListResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -189,7 +193,6 @@ export const getCustomerRequest = async (customerNumber: number | string, access
     const responseBody = await axios.get(GET_CUSTOMER_API_URL(customerNumber), bearerAuthorization(accessToken))
         .then(responseDataHandler<GetCustomerResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -198,7 +201,6 @@ export const patchCustomerRequest = async (requestBody: PatchCustomerRequestDto,
     const responseBody = await axios.patch(PATCH_CUSTOMER_API_URL(customerNumber), requestBody, bearerAuthorization(accessToken))
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-    
     return responseBody;
 };
 
@@ -207,7 +209,6 @@ export const deleteCustomerRequest = async (customerNumber: number | string, acc
     const responseBody = await axios.delete(DELETE_CUSTOMER_API_URL(customerNumber), bearerAuthorization(accessToken))
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -216,7 +217,6 @@ export const postCareRecordRequest = async (requestBody: PostCareRecordRequestDt
     const responseBody = await axios.post(POST_CARE_RECORD_API_URL(customerNumber), requestBody, bearerAuthorization(accessToken))
         .then(responseDataHandler<ResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 };
 
@@ -225,7 +225,6 @@ export const getCareRecordListRequest = async (customerNumber: number | string, 
     const responseBody = await axios.get(GET_CARE_RECORD_LIST_API_URL(customerNumber), bearerAuthorization(accessToken))
         .then(responseDataHandler<GetCareRecordResponseDto>)
         .catch(responseErrorHandler);
-
     return responseBody;
 }; 
 
@@ -238,6 +237,5 @@ export const fileUploadRequest = async (requestBody: FormData) => {
     const url = await axios.post(FILE_UPLOAD_URL, requestBody, multipart)
         .then(responseDataHandler<string>)
         .catch(error => null);
-
     return url;
 };
